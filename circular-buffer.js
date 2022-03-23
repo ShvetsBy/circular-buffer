@@ -18,7 +18,7 @@ class CircularBuffer {
   }
 
   read() {
-    return this.buffer[this.head % this.buffer.length];
+    return this.buffer[this.head];
   }
 
   forceWrite() {
