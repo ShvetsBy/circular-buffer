@@ -3,32 +3,36 @@
 // convenience to get you started writing code faster.
 //
 
-import { buffer } from "stream/consumers";
+//import { buffer } from "stream/consumers";
 
 class CircularBuffer {
-  constructor(n) {
-    this.buffer = new Array(n);
+  constructor(size) {
+    this.buffer = new Array(size);
     this.head = 0;
-    this.tail = -1;
+    this.queueLength = 0;
   }
 
-  write(val) {
-    this.tail = (this.tail + 1) % this.buffer.length;
-    this.buffer[tail] = val;
+  write(value) {
+    if (this.queueLength === this.buffer.length) throw new BufferFullError();
+    this.buffer[(this.head + this.queueLength) % this.buffer.length] = value;
+    this.queueLength += 1;
+    return true;
   }
 
   read() {
+    if (this.count === 0) throw new BufferEmptyError();
     return this.buffer[this.head];
   }
 
-  forceWrite() {
-    throw new Error("Remove this statement and implement this function");
+  forceWrite(value) {
+    this.buffer[(this.head + this.queueLength) % this.buffer.length] = value;
+    this.head += 1;
+    if (this.queueLength < this.buffer.length) this.queueLength += 1;
+    return true;
   }
 
   clear() {
-    this.buffer = new Array(n);
-    this.head = 0;
-    this.tail = -1;
+    this.queueLength = 0;
   }
 }
 
@@ -36,13 +40,12 @@ export default CircularBuffer;
 
 export class BufferFullError extends Error {
   constructor() {
-    // if (!this.isEmpty() && (this.tail + 1) % this.buffer.legth === this.head)
-    //   throw new Error("buffer is full");
+    super("Buffer is full");
   }
 }
 
 export class BufferEmptyError extends Error {
   constructor() {
-    //  if (this.tail === -1) throw new Error("buffer is empty");
+    super("Buffer is empty");
   }
 }
