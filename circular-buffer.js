@@ -20,7 +20,7 @@ class CircularBuffer {
   }
 
   read() {
-    if (this.count === 0) throw new BufferEmptyError();
+    if (this.queueLength === 0) throw new BufferEmptyError();
     return this.buffer[this.head];
   }
 
